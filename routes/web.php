@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminVendorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NeighborProfileController;
 use App\Http\Controllers\ProfileController;
@@ -35,6 +36,15 @@ Route::middleware('auth')->group(function () {
 
     Route::patch('/vendor/profile', [VendorProfileController::class, 'update'])
         ->name('vendor.profile.update');
+
+    Route::get('/admin/vendors', [AdminVendorController::class, 'index'])
+        ->name('admin.vendors.index');
+
+    Route::patch('/admin/vendors/{vendorProfile}/approve', [AdminVendorController::class, 'approve'])
+        ->name('admin.vendors.approve');
+
+    Route::patch('/admin/vendors/{vendorProfile}/mark-pending', [AdminVendorController::class, 'markPending'])
+        ->name('admin.vendors.mark-pending');
 });
 
 require __DIR__ . '/auth.php';

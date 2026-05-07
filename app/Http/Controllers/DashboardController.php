@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\VendorProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -18,6 +20,10 @@ class DashboardController extends Controller
         if ($user->isAdmin()) {
             return view('dashboards.admin', [
                 'user' => $user,
+                'totalUsers' => User::count(),
+                'totalNeighbors' => User::where('role', User::ROLE_NEIGHBOR)->count(),
+                'totalVendors' => User::where('role', User::ROLE_VENDOR)->count(),
+                'pendingVendors' => VendorProfile::where('is_verified', false)->count(),
             ]);
         }
 

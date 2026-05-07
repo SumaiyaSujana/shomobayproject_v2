@@ -9,13 +9,52 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h3 class="text-2xl font-bold text-gray-900">
-                        Welcome, {{ $user->name }}
-                    </h3>
+                <div class="p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900">
+                            Welcome, {{ $user->name }}
+                        </h3>
 
-                    <p class="mt-2 text-gray-600">
-                        You are logged in as an admin. You will manage vendor approvals, disputes, platform health, and system monitoring.
+                        <p class="mt-2 text-gray-600">
+                            You are logged in as an admin. You will manage vendor approvals, disputes, platform health, and system monitoring.
+                        </p>
+                    </div>
+
+                    <a
+                        href="{{ route('admin.vendors.index') }}"
+                        class="inline-flex items-center px-4 py-2 bg-gray-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700"
+                    >
+                        Manage Vendors
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                    <h4 class="font-semibold text-gray-900">Total Users</h4>
+                    <p class="mt-3 text-3xl font-bold text-gray-900">
+                        {{ $totalUsers }}
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                    <h4 class="font-semibold text-gray-900">Neighbors</h4>
+                    <p class="mt-3 text-3xl font-bold text-green-700">
+                        {{ $totalNeighbors }}
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                    <h4 class="font-semibold text-gray-900">Vendors</h4>
+                    <p class="mt-3 text-3xl font-bold text-indigo-700">
+                        {{ $totalVendors }}
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                    <h4 class="font-semibold text-gray-900">Pending Vendors</h4>
+                    <p class="mt-3 text-3xl font-bold text-orange-600">
+                        {{ $pendingVendors }}
                     </p>
                 </div>
             </div>
@@ -24,21 +63,28 @@
                 <div class="bg-white p-6 shadow-sm sm:rounded-lg">
                     <h4 class="font-semibold text-gray-900">Vendor Approval</h4>
                     <p class="mt-3 text-gray-600">
-                        Coming in Sprint 3
+                        Review and approve vendors before they can bid on neighborhood group carts.
                     </p>
+
+                    <a
+                        href="{{ route('admin.vendors.index') }}"
+                        class="inline-block mt-4 text-sm text-indigo-600 hover:text-indigo-900 underline"
+                    >
+                        Open vendor verification center
+                    </a>
                 </div>
 
                 <div class="bg-white p-6 shadow-sm sm:rounded-lg">
                     <h4 class="font-semibold text-gray-900">Dispute Management</h4>
                     <p class="mt-3 text-gray-600">
-                        Coming in Sprint 4
+                        Coming in Sprint 4.
                     </p>
                 </div>
 
                 <div class="bg-white p-6 shadow-sm sm:rounded-lg">
                     <h4 class="font-semibold text-gray-900">System Health</h4>
                     <p class="mt-3 text-gray-600">
-                        Coming in Sprint 4
+                        Coming in Sprint 4.
                     </p>
                 </div>
             </div>
