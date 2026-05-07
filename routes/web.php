@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\AdminDisputeController;
 use App\Http\Controllers\AdminVendorController;
 use App\Http\Controllers\BidAcceptanceController;
 use App\Http\Controllers\CartContributionController;
 use App\Http\Controllers\ClaimTokenController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeliveryCoordinatorController;
+use App\Http\Controllers\DisputeController;
 use App\Http\Controllers\GroupCartController;
 use App\Http\Controllers\NeighborProfileController;
 use App\Http\Controllers\OrderDeliveryController;
@@ -62,6 +64,18 @@ Route::middleware('auth')->group(function () {
 
     Route::patch('/admin/vendors/{vendorProfile}/mark-pending', [AdminVendorController::class, 'markPending'])
         ->name('admin.vendors.mark-pending');
+
+    Route::get('/admin/disputes', [AdminDisputeController::class, 'index'])
+        ->name('admin.disputes.index');
+
+    Route::patch('/admin/disputes/{dispute}', [AdminDisputeController::class, 'update'])
+        ->name('admin.disputes.update');
+
+    Route::get('/disputes', [DisputeController::class, 'index'])
+        ->name('disputes.index');
+
+    Route::post('/orders/{order}/disputes', [DisputeController::class, 'store'])
+        ->name('orders.disputes.store');
 
     Route::get('/group-carts', [GroupCartController::class, 'index'])
         ->name('group-carts.index');

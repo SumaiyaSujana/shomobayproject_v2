@@ -87,6 +87,16 @@ class User extends Authenticatable
         return $this->hasMany(SubstitutionVote::class);
     }
 
+    public function disputes(): HasMany
+    {
+        return $this->hasMany(Dispute::class);
+    }
+
+    public function resolvedDisputes(): HasMany
+    {
+        return $this->hasMany(Dispute::class, 'resolved_by_user_id');
+    }
+
     public function isNeighbor(): bool
     {
         return $this->role === self::ROLE_NEIGHBOR;
