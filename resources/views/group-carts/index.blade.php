@@ -12,17 +12,28 @@
                 <div class="p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                         <h3 class="text-2xl font-bold text-gray-900">
-                            Active Group Carts
+                            Nearby Active Group Carts
                         </h3>
 
                         <p class="mt-2 text-gray-600">
-                            Join your neighbors to reach wholesale quantity and unlock a lower price.
+                            You can see carts from your own building or carts within a 1 km neighborhood radius.
                         </p>
 
                         @if($neighborProfile?->apartment_building)
                             <p class="mt-2 text-sm text-gray-500">
-                                Showing carts for your building:
+                                Your building:
                                 <strong>{{ $neighborProfile->apartment_building }}</strong>
+                            </p>
+                        @endif
+
+                        @if($neighborProfile?->location_coordinates)
+                            <p class="mt-1 text-sm text-gray-500">
+                                Your coordinates:
+                                <strong>{{ $neighborProfile->location_coordinates }}</strong>
+                            </p>
+                        @else
+                            <p class="mt-1 text-sm text-orange-600">
+                                Add your coordinates in your profile to enable accurate 1 km filtering.
                             </p>
                         @endif
                     </div>
@@ -39,7 +50,7 @@
             @if($groupCarts->isEmpty())
                 <div class="bg-white p-6 shadow-sm sm:rounded-lg">
                     <p class="text-gray-600">
-                        No active group carts found for your building. Be the first neighbor to start one.
+                        No nearby active group carts found. You can start one for your building.
                     </p>
                 </div>
             @else
@@ -49,6 +60,11 @@
                             $currentPrice = $pricingService->currentPricePerKgPaisa($cart);
                             $progress = $pricingService->progressPercentage($cart);
                             $thresholdMet = $pricingService->canCheckout($cart);
+                            $sameBuilding = $neighborProfile?->apartment_building === $cart->apartment_building;
+                            $distanceText = $geoDistanceService->formattedDistance(
+                                $neighborProfile?->location_coordinates,
+                                $cart->location_coordinates
+                            );
                         @endphp
 
                         <div class="bg-white p-6 shadow-sm sm:rounded-lg">
@@ -65,17 +81,33 @@
                                     <p class="mt-1 text-sm text-gray-600">
                                         Building: {{ $cart->apartment_building }}
                                     </p>
+
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        {{ $distanceText }}
+                                    </p>
                                 </div>
 
-                                @if($thresholdMet)
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800">
-                                        Threshold Met
-                                    </span>
-                                @else
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                        Active
-                                    </span>
-                                @endif
+                                <div class="flex flex-col gap-2 items-end">
+                                    @if($thresholdMet)
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                                            Threshold Met
+                                        </span>
+                                    @else
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                            Active
+                                        </span>
+                                    @endif
+
+                                    @if($sameBuilding)
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            Same Building
+                                        </span>
+                                    @else
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
+                                            Within 1 km
+                                        </span>
+                                    @endif
+                                </div>
                             </div>
 
                             <div class="mt-5">

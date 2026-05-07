@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\GroceryItem;
 use App\Models\GroupCart;
+use App\Services\GeoDistanceService;
 use App\Services\GroupCartPricingService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -14,33 +15,47 @@ use Illuminate\View\View;
 class GroupCartController extends Controller
 {
     /**
-     * Show active and threshold-met group carts for neighbors.
+     * Show active and threshold-met group carts for nearby neighbors.
      */
-    public function index(GroupCartPricingService $pricingService): View
-    {
+    public function index(
+        GroupCartPricingService $pricingService,
+        GeoDistanceService $geoDistanceService
+    ): View {
         $user = Auth::user();
 
         abort_unless($user->isNeighbor(), 403);
 
         $neighborProfile = $user->neighborProfile;
 
-        $groupCartQuery = GroupCart::with(['groceryItem', 'creator'])
+        $allGroupCarts = GroupCart::with(['groceryItem', 'creator'])
             ->whereIn('status', [
                 GroupCart::STATUS_ACTIVE,
                 GroupCart::STATUS_THRESHOLD_MET,
             ])
-            ->latest();
+            ->latest()
+            ->get();
 
-        if ($neighborProfile?->apartment_building) {
-            $groupCartQuery->where('apartment_building', $neighborProfile->apartment_building);
-        }
+        $groupCarts = $allGroupCarts->filter(function (GroupCart $cart) use ($neighborProfile, $geoDistanceService) {
+            if (!$neighborProfile) {
+                return false;
+            }
 
-        $groupCarts = $groupCartQuery->get();
+            $sameBuilding = $neighborProfile->apartment_building
+                && $cart->apartment_building === $neighborProfile->apartment_building;
+
+            $withinOneKm = $geoDistanceService->isWithinOneKm(
+                $neighborProfile->location_coordinates,
+                $cart->location_coordinates
+            );
+
+            return $sameBuilding || $withinOneKm;
+        });
 
         return view('group-carts.index', [
             'groupCarts' => $groupCarts,
             'neighborProfile' => $neighborProfile,
             'pricingService' => $pricingService,
+            'geoDistanceService' => $geoDistanceService,
         ]);
     }
 
