@@ -28,7 +28,7 @@
                         </h3>
 
                         <p class="mt-2 text-gray-600">
-                            You are logged in as a vendor, farmer, or wholesaler. After admin verification, you can bid on neighborhood bulk orders.
+                            You are logged in as a vendor, farmer, or wholesaler. After admin verification, you can bid on neighborhood bulk orders and track your revenue analytics.
                         </p>
                     </div>
 
@@ -38,6 +38,13 @@
                             class="inline-flex items-center justify-center px-4 py-2 bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-800"
                         >
                             Browse Bulk Requests
+                        </a>
+
+                        <a
+                            href="{{ route('vendor.analytics.index') }}"
+                            class="inline-flex items-center justify-center px-4 py-2 bg-indigo-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-800"
+                        >
+                            Revenue Analytics
                         </a>
 
                         <a
@@ -90,17 +97,34 @@
                 </div>
             </div>
 
-            <div class="bg-white p-6 shadow-sm sm:rounded-lg">
-                <h4 class="font-semibold text-gray-900">Business Name</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                    <h4 class="font-semibold text-gray-900">Business Profile</h4>
 
-                <p class="mt-3 text-lg text-gray-700">
-                    {{ $vendorProfile?->business_name ?? 'Not added yet' }}
-                </p>
+                    <p class="mt-3 text-lg text-gray-700">
+                        {{ $vendorProfile?->business_name ?? 'Not added yet' }}
+                    </p>
 
-                <p class="mt-2 text-sm text-gray-500">
-                    License File:
-                    {{ $vendorProfile?->trade_license_file ? 'Uploaded' : 'Not uploaded yet' }}
-                </p>
+                    <p class="mt-2 text-sm text-gray-500">
+                        License File:
+                        {{ $vendorProfile?->trade_license_file ? 'Uploaded' : 'Not uploaded yet' }}
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                    <h4 class="font-semibold text-gray-900">Revenue Analytics</h4>
+
+                    <p class="mt-3 text-gray-600">
+                        View expected earnings, accepted orders, bid performance, and most requested items.
+                    </p>
+
+                    <a
+                        href="{{ route('vendor.analytics.index') }}"
+                        class="inline-block mt-4 text-sm text-indigo-600 hover:text-indigo-900 underline"
+                    >
+                        Open revenue analytics
+                    </a>
+                </div>
             </div>
 
         </div>

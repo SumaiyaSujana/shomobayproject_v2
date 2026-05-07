@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GroupCartController;
 use App\Http\Controllers\NeighborProfileController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VendorAnalyticsController;
 use App\Http\Controllers\VendorBidController;
 use App\Http\Controllers\VendorProfileController;
 use App\Http\Controllers\WalletController;
@@ -83,6 +84,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/vendor/bulk-requests/{groupCart}/bids', [VendorBidController::class, 'store'])
         ->name('vendor.bulk-requests.bids.store');
+
+    Route::get('/vendor/analytics', [VendorAnalyticsController::class, 'index'])
+        ->name('vendor.analytics.index');
 });
 
 require __DIR__ . '/auth.php';
