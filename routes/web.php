@@ -22,6 +22,7 @@ use App\Http\Controllers\VendorOrderController;
 use App\Http\Controllers\VendorProfileController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminSystemHealthController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -70,6 +71,9 @@ Route::middleware('auth')->group(function () {
 
     Route::patch('/admin/disputes/{dispute}', [AdminDisputeController::class, 'update'])
         ->name('admin.disputes.update');
+
+    Route::get('/admin/system-health', [AdminSystemHealthController::class, 'index'])
+        ->name('admin.system-health.index');
 
     Route::get('/disputes', [DisputeController::class, 'index'])
         ->name('disputes.index');
