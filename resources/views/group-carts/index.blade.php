@@ -21,7 +21,7 @@
 
                         @if($neighborProfile?->apartment_building)
                             <p class="mt-2 text-sm text-gray-500">
-                                Your building:
+                                Showing carts for your building:
                                 <strong>{{ $neighborProfile->apartment_building }}</strong>
                             </p>
                         @endif
@@ -39,7 +39,7 @@
             @if($groupCarts->isEmpty())
                 <div class="bg-white p-6 shadow-sm sm:rounded-lg">
                     <p class="text-gray-600">
-                        No active group carts yet. Be the first neighbor to start one.
+                        No active group carts found for your building. Be the first neighbor to start one.
                     </p>
                 </div>
             @else
@@ -48,6 +48,7 @@
                         @php
                             $currentPrice = $pricingService->currentPricePerKgPaisa($cart);
                             $progress = $pricingService->progressPercentage($cart);
+                            $thresholdMet = $pricingService->canCheckout($cart);
                         @endphp
 
                         <div class="bg-white p-6 shadow-sm sm:rounded-lg">
@@ -66,9 +67,15 @@
                                     </p>
                                 </div>
 
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                    Active
-                                </span>
+                                @if($thresholdMet)
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                                        Threshold Met
+                                    </span>
+                                @else
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                        Active
+                                    </span>
+                                @endif
                             </div>
 
                             <div class="mt-5">
@@ -121,7 +128,7 @@
                                     href="{{ route('group-carts.show', $cart) }}"
                                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700"
                                 >
-                                    View Details
+                                    View and Join
                                 </a>
                             </div>
                         </div>

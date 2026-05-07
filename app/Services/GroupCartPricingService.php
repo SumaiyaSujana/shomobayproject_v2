@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\GroceryItem;
 use App\Models\GroupCart;
 
 class GroupCartPricingService
@@ -15,6 +14,8 @@ class GroupCartPricingService
      */
     public function currentPricePerKgPaisa(GroupCart $groupCart): int
     {
+        $groupCart->loadMissing('groceryItem');
+
         $item = $groupCart->groceryItem;
 
         if ($groupCart->target_weight_grams <= 0) {
@@ -34,13 +35,40 @@ class GroupCartPricingService
     }
 
     /**
-     * Calculate estimated amount for a given quantity.
+     * Calculate estimated amount for a given quantity using the current cart price.
      */
     public function estimatedAmountPaisa(GroupCart $groupCart, int $quantityGrams): int
     {
         $pricePerKgPaisa = $this->currentPricePerKgPaisa($groupCart);
 
+        return $this->estimatedAmountPaisaAtPrice($pricePerKgPaisa, $quantityGrams);
+    }
+
+    /**
+     * Calculate estimated amount for a given quantity using a fixed per kg price.
+     */
+    public function estimatedAmountPaisaAtPrice(int $pricePerKgPaisa, int $quantityGrams): int
+    {
         return (int) round(($quantityGrams / 1000) * $pricePerKgPaisa);
+    }
+
+    /**
+     * Recalculate all neighbor bills after the cart weight changes.
+     */
+    public function refreshContributionAmounts(GroupCart $groupCart): void
+    {
+        $groupCart->loadMissing(['groceryItem', 'contributions']);
+
+        $pricePerKgPaisa = $this->currentPricePerKgPaisa($groupCart);
+
+        foreach ($groupCart->contributions as $contribution) {
+            $contribution->update([
+                'estimated_amount_paisa' => $this->estimatedAmountPaisaAtPrice(
+                    $pricePerKgPaisa,
+                    $contribution->quantity_grams
+                ),
+            ]);
+        }
     }
 
     /**
@@ -64,6 +92,17 @@ class GroupCartPricingService
     public function canCheckout(GroupCart $groupCart): bool
     {
         return $groupCart->current_weight_grams >= $groupCart->target_weight_grams;
+    }
+
+    /**
+     * Calculate remaining weight before threshold is reached.
+     */
+    public function remainingWeightGrams(GroupCart $groupCart): int
+    {
+        return max(
+            $groupCart->target_weight_grams - $groupCart->current_weight_grams,
+            0
+        );
     }
 
     /**

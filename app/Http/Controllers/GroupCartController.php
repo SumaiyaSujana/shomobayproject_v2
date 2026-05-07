@@ -14,7 +14,7 @@ use Illuminate\View\View;
 class GroupCartController extends Controller
 {
     /**
-     * Show all active group carts for neighbors.
+     * Show active and threshold-met group carts for neighbors.
      */
     public function index(GroupCartPricingService $pricingService): View
     {
@@ -24,10 +24,18 @@ class GroupCartController extends Controller
 
         $neighborProfile = $user->neighborProfile;
 
-        $groupCarts = GroupCart::with(['groceryItem', 'creator'])
-            ->where('status', GroupCart::STATUS_ACTIVE)
-            ->latest()
-            ->get();
+        $groupCartQuery = GroupCart::with(['groceryItem', 'creator'])
+            ->whereIn('status', [
+                GroupCart::STATUS_ACTIVE,
+                GroupCart::STATUS_THRESHOLD_MET,
+            ])
+            ->latest();
+
+        if ($neighborProfile?->apartment_building) {
+            $groupCartQuery->where('apartment_building', $neighborProfile->apartment_building);
+        }
+
+        $groupCarts = $groupCartQuery->get();
 
         return view('group-carts.index', [
             'groupCarts' => $groupCarts,
@@ -99,7 +107,9 @@ class GroupCartController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'target_weight_kg' => 'Target weight must be at least ' . number_format($groceryItem->minimum_bulk_weight_grams / 1000, 2) . ' kg for this item.',
+                    'target_weight_kg' => 'Target weight must be at least '
+                        . number_format($groceryItem->minimum_bulk_weight_grams / 1000, 2)
+                        . ' kg for this item.',
                 ]);
         }
 
@@ -131,12 +141,27 @@ class GroupCartController extends Controller
 
         $groupCart->load(['groceryItem', 'creator', 'contributions.user']);
 
+        $currentUserContribution = $groupCart->contributions
+            ->firstWhere('user_id', $user->id);
+
+        $sameBuilding = $user->neighborProfile
+            && $user->neighborProfile->apartment_building === $groupCart->apartment_building;
+
+        $canContribute = $sameBuilding
+            && !$groupCart->deadline_at->isPast()
+            && $groupCart->status !== GroupCart::STATUS_ORDERED
+            && $groupCart->status !== GroupCart::STATUS_EXPIRED;
+
         return view('group-carts.show', [
             'groupCart' => $groupCart,
             'pricingService' => $pricingService,
             'currentPricePerKgPaisa' => $pricingService->currentPricePerKgPaisa($groupCart),
             'progressPercentage' => $pricingService->progressPercentage($groupCart),
             'canCheckout' => $pricingService->canCheckout($groupCart),
+            'remainingWeightGrams' => $pricingService->remainingWeightGrams($groupCart),
+            'currentUserContribution' => $currentUserContribution,
+            'canContribute' => $canContribute,
+            'minimumContributionKg' => $groupCart->groceryItem->minimum_contribution_grams / 1000,
         ]);
     }
 }

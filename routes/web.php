@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminVendorController;
+use App\Http\Controllers\CartContributionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GroupCartController;
 use App\Http\Controllers\NeighborProfileController;
@@ -58,6 +59,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/group-carts/{groupCart}', [GroupCartController::class, 'show'])
         ->name('group-carts.show');
+
+    Route::post('/group-carts/{groupCart}/contributions', [CartContributionController::class, 'store'])
+        ->name('group-carts.contributions.store');
+
+    Route::delete('/group-carts/{groupCart}/contributions', [CartContributionController::class, 'destroy'])
+        ->name('group-carts.contributions.destroy');
 });
 
 require __DIR__ . '/auth.php';
