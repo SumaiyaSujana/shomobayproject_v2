@@ -26,12 +26,28 @@
                         </p>
                     </div>
 
-                    <a
-                        href="{{ route('neighbor.profile.edit') }}"
-                        class="inline-flex items-center px-4 py-2 bg-gray-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700"
-                    >
-                        Edit Neighbor Profile
-                    </a>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <a
+                            href="{{ route('group-carts.index') }}"
+                            class="inline-flex items-center justify-center px-4 py-2 bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-800"
+                        >
+                            Browse Group Carts
+                        </a>
+
+                        <a
+                            href="{{ route('group-carts.create') }}"
+                            class="inline-flex items-center justify-center px-4 py-2 bg-indigo-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-800"
+                        >
+                            Create Group Cart
+                        </a>
+
+                        <a
+                            href="{{ route('neighbor.profile.edit') }}"
+                            class="inline-flex items-center justify-center px-4 py-2 bg-gray-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700"
+                        >
+                            Edit Neighbor Profile
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -65,11 +81,11 @@
 
             <div class="bg-white p-6 shadow-sm sm:rounded-lg">
                 <h4 class="text-lg font-semibold text-gray-900">
-                    Sprint 2 Preview
+                    Sprint 2 Progress
                 </h4>
 
                 <p class="mt-2 text-gray-600">
-                    Next, we will build the Neighborhood Group Cart Engine. This will allow neighbors to create shared grocery carts and contribute item quantities.
+                    The group cart engine has started. You can now create shared grocery carts for your building and view active neighborhood carts.
                 </p>
             </div>
 

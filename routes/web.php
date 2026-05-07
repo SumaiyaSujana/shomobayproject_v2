@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminVendorController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GroupCartController;
 use App\Http\Controllers\NeighborProfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VendorProfileController;
@@ -45,6 +46,18 @@ Route::middleware('auth')->group(function () {
 
     Route::patch('/admin/vendors/{vendorProfile}/mark-pending', [AdminVendorController::class, 'markPending'])
         ->name('admin.vendors.mark-pending');
+
+    Route::get('/group-carts', [GroupCartController::class, 'index'])
+        ->name('group-carts.index');
+
+    Route::get('/group-carts/create', [GroupCartController::class, 'create'])
+        ->name('group-carts.create');
+
+    Route::post('/group-carts', [GroupCartController::class, 'store'])
+        ->name('group-carts.store');
+
+    Route::get('/group-carts/{groupCart}', [GroupCartController::class, 'show'])
+        ->name('group-carts.show');
 });
 
 require __DIR__ . '/auth.php';

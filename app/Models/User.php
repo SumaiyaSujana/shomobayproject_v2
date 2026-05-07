@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -67,6 +68,22 @@ class User extends Authenticatable
     public function wallet(): HasOne
     {
         return $this->hasOne(Wallet::class);
+    }
+
+    /**
+     * Group carts created by this user.
+     */
+    public function createdGroupCarts(): HasMany
+    {
+        return $this->hasMany(GroupCart::class, 'created_by_user_id');
+    }
+
+    /**
+     * Cart contributions made by this user.
+     */
+    public function cartContributions(): HasMany
+    {
+        return $this->hasMany(CartContribution::class);
     }
 
     /**
