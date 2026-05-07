@@ -15,6 +15,12 @@ class CartContribution extends Model
         'user_id',
         'quantity_grams',
         'estimated_amount_paisa',
+        'qr_claim_token',
+        'claimed_at',
+    ];
+
+    protected $casts = [
+        'claimed_at' => 'datetime',
     ];
 
     /**
@@ -47,5 +53,13 @@ class CartContribution extends Model
     public function estimatedAmountInTaka(): float
     {
         return $this->estimated_amount_paisa / 100;
+    }
+
+    /**
+     * Check whether this share has already been claimed.
+     */
+    public function isClaimed(): bool
+    {
+        return $this->claimed_at !== null;
     }
 }

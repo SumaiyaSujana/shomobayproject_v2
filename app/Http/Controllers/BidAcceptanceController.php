@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bid;
+use App\Models\CartContribution;
 use App\Models\GroupCart;
 use App\Models\Order;
 use App\Models\Transaction;
@@ -10,12 +11,14 @@ use App\Models\Wallet;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class BidAcceptanceController extends Controller
 {
     /**
-     * Accept a vendor bid, create an order, and move neighbor payments into escrow.
+     * Accept a vendor bid, create an order, move neighbor payments into escrow,
+     * and generate claim tokens for each neighbor contribution.
      */
     public function accept(GroupCart $groupCart, Bid $bid): RedirectResponse
     {
@@ -127,6 +130,11 @@ class BidAcceptanceController extends Controller
                     'status' => 'completed',
                     'description' => 'Funds moved from wallet balance to escrow after vendor bid acceptance.',
                 ]);
+
+                $contribution->update([
+                    'qr_claim_token' => $contribution->qr_claim_token ?: $this->generateUniqueClaimToken(),
+                    'claimed_at' => null,
+                ]);
             }
 
             $lockedBid->update([
@@ -184,5 +192,17 @@ class BidAcceptanceController extends Controller
         }
 
         return $payables;
+    }
+
+    /**
+     * Generate a unique claim token.
+     */
+    private function generateUniqueClaimToken(): string
+    {
+        do {
+            $token = 'SHOMO-' . Str::upper(Str::random(10));
+        } while (CartContribution::where('qr_claim_token', $token)->exists());
+
+        return $token;
     }
 }

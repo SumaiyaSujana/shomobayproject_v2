@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminVendorController;
 use App\Http\Controllers\BidAcceptanceController;
 use App\Http\Controllers\CartContributionController;
+use App\Http\Controllers\ClaimTokenController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GroupCartController;
 use App\Http\Controllers\NeighborProfileController;
@@ -86,6 +87,15 @@ Route::middleware('auth')->group(function () {
 
     Route::patch('/orders/{order}/mark-delivered', [OrderDeliveryController::class, 'markDelivered'])
         ->name('orders.mark-delivered');
+
+    Route::get('/claim-tokens', [ClaimTokenController::class, 'index'])
+        ->name('claim-tokens.index');
+
+    Route::get('/claim-tokens/{cartContribution}', [ClaimTokenController::class, 'show'])
+        ->name('claim-tokens.show');
+
+    Route::patch('/claim-tokens/{cartContribution}/claim', [ClaimTokenController::class, 'claim'])
+        ->name('claim-tokens.claim');
 
     Route::get('/vendor/bulk-requests', [VendorBidController::class, 'index'])
         ->name('vendor.bulk-requests.index');

@@ -48,6 +48,13 @@
                         </a>
 
                         <a
+                            href="{{ route('claim-tokens.index') }}"
+                            class="inline-flex items-center justify-center px-4 py-2 bg-purple-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-800"
+                        >
+                            My Claim Tokens
+                        </a>
+
+                        <a
                             href="{{ route('neighbor.profile.edit') }}"
                             class="inline-flex items-center justify-center px-4 py-2 bg-gray-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700"
                         >
@@ -124,11 +131,11 @@
 
             <div class="bg-white p-6 shadow-sm sm:rounded-lg">
                 <h4 class="text-lg font-semibold text-gray-900">
-                    Sprint 3 Progress
+                    Sprint 4 Progress
                 </h4>
 
                 <p class="mt-2 text-gray-600">
-                    Vendor bids can now be accepted by the group cart creator. When a bid is accepted, participant payments are moved into escrow.
+                    Digital claim tokens are now available after a vendor bid is accepted. Neighbors can use tokens to claim their delivery share.
                 </p>
             </div>
 
