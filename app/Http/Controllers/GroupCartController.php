@@ -161,6 +161,7 @@ class GroupCartController extends Controller
             'contributions.user.wallet',
             'bids.vendor.vendorProfile',
             'order.bid.vendor.vendorProfile',
+            'order.deliveryCoordinator',
         ]);
 
         $currentUserContribution = $groupCart->contributions
@@ -191,6 +192,11 @@ class GroupCartController extends Controller
             && $groupCart->order
             && $groupCart->order->status === Order::STATUS_ESCROW_HELD;
 
+        $canAssignCoordinator = $user->id === $groupCart->created_by_user_id
+            && $groupCart->order
+            && $groupCart->order->status === Order::STATUS_ESCROW_HELD
+            && !$groupCart->order->delivery_coordinator_user_id;
+
         return view('group-carts.show', [
             'groupCart' => $groupCart,
             'pricingService' => $pricingService,
@@ -204,6 +210,7 @@ class GroupCartController extends Controller
             'canExpireFailedCart' => $canExpireFailedCart,
             'canRefundOrder' => $canRefundOrder,
             'canMarkDelivered' => $canMarkDelivered,
+            'canAssignCoordinator' => $canAssignCoordinator,
             'minimumContributionKg' => $groupCart->groceryItem->minimum_contribution_grams / 1000,
         ]);
     }

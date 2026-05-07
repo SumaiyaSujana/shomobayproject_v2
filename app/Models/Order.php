@@ -19,10 +19,17 @@ class Order extends Model
         'bid_id',
         'accepted_by_user_id',
         'vendor_user_id',
+        'delivery_coordinator_user_id',
         'item_amount_paisa',
         'delivery_fee_paisa',
         'total_amount_paisa',
+        'coordinator_discount_paisa',
+        'coordinator_selected_at',
         'status',
+    ];
+
+    protected $casts = [
+        'coordinator_selected_at' => 'datetime',
     ];
 
     /**
@@ -58,10 +65,26 @@ class Order extends Model
     }
 
     /**
+     * The neighbor selected as delivery coordinator.
+     */
+    public function deliveryCoordinator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'delivery_coordinator_user_id');
+    }
+
+    /**
      * Show total amount in taka.
      */
     public function totalAmountInTaka(): float
     {
         return $this->total_amount_paisa / 100;
+    }
+
+    /**
+     * Show coordinator discount in taka.
+     */
+    public function coordinatorDiscountInTaka(): float
+    {
+        return $this->coordinator_discount_paisa / 100;
     }
 }

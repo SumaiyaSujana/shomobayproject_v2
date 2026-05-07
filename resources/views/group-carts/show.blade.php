@@ -44,6 +44,12 @@
                 </div>
             @endif
 
+            @if (session('status') === 'coordinator-selected')
+                <div class="bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-md">
+                    Delivery coordinator selected successfully. A 5% discount has been returned to the coordinator wallet.
+                </div>
+            @endif
+
             @if (session('status') === 'group-cart-expired')
                 <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-md">
                     This failed group cart has been marked as expired. No escrow money was held for this cart.
@@ -176,6 +182,83 @@
                             @endif
                         </div>
                     </div>
+                </div>
+            @endif
+
+            @if($groupCart->order)
+                <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                    <h4 class="text-lg font-semibold text-gray-900">
+                        Delivery Coordinator Discount
+                    </h4>
+
+                    @if($groupCart->order->delivery_coordinator_user_id)
+                        <div class="mt-4 rounded-md bg-green-50 p-4">
+                            <p class="text-green-800">
+                                Delivery coordinator:
+                                <strong>{{ $groupCart->order->deliveryCoordinator?->name ?? 'Unknown Neighbor' }}</strong>
+                            </p>
+
+                            <p class="mt-1 text-green-700">
+                                5% discount returned:
+                                <strong>৳{{ number_format($groupCart->order->coordinator_discount_paisa / 100, 2) }}</strong>
+                            </p>
+
+                            <p class="mt-1 text-sm text-green-700">
+                                Selected at:
+                                {{ $groupCart->order->coordinator_selected_at?->format('d M Y, h:i A') }}
+                            </p>
+                        </div>
+                    @elseif($canAssignCoordinator)
+                        <p class="mt-2 text-gray-600">
+                            Select one contributor as the delivery coordinator. The selected neighbor will receive a 5% discount from their escrow payment.
+                        </p>
+
+                        <form
+                            method="POST"
+                            action="{{ route('orders.assign-coordinator', $groupCart->order) }}"
+                            class="mt-6 flex flex-col md:flex-row gap-4"
+                        >
+                            @csrf
+                            @method('PATCH')
+
+                            <div class="flex-1">
+                                <x-input-label for="delivery_coordinator_user_id" value="Select Coordinator" />
+
+                                <select
+                                    id="delivery_coordinator_user_id"
+                                    name="delivery_coordinator_user_id"
+                                    class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                    required
+                                >
+                                    <option value="">
+                                        Choose a neighbor
+                                    </option>
+
+                                    @foreach($groupCart->contributions as $contribution)
+                                        <option value="{{ $contribution->user_id }}">
+                                            {{ $contribution->user?->name ?? 'Unknown Neighbor' }}
+                                            | {{ number_format($contribution->quantity_grams / 1000, 2) }} kg
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                <x-input-error class="mt-2" :messages="$errors->get('delivery_coordinator_user_id')" />
+                            </div>
+
+                            <div class="flex items-end">
+                                <button
+                                    type="submit"
+                                    class="inline-flex items-center justify-center px-4 py-2 bg-purple-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-800"
+                                >
+                                    Apply 5% Discount
+                                </button>
+                            </div>
+                        </form>
+                    @else
+                        <p class="mt-2 text-gray-600">
+                            Coordinator discount is only available while the order is in escrow and before delivery/refund.
+                        </p>
+                    @endif
                 </div>
             @endif
 

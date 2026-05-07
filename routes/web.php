@@ -15,6 +15,7 @@ use App\Http\Controllers\VendorBidController;
 use App\Http\Controllers\VendorProfileController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DeliveryCoordinatorController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -87,6 +88,9 @@ Route::middleware('auth')->group(function () {
 
     Route::patch('/orders/{order}/mark-delivered', [OrderDeliveryController::class, 'markDelivered'])
         ->name('orders.mark-delivered');
+
+    Route::patch('/orders/{order}/assign-coordinator', [DeliveryCoordinatorController::class, 'assign'])
+        ->name('orders.assign-coordinator');
 
     Route::get('/claim-tokens', [ClaimTokenController::class, 'index'])
         ->name('claim-tokens.index');
