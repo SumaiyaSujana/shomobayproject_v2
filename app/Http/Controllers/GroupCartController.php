@@ -177,6 +177,15 @@ class GroupCartController extends Controller
             && $groupCart->status === GroupCart::STATUS_THRESHOLD_MET
             && !$groupCart->order;
 
+        $canExpireFailedCart = $user->id === $groupCart->created_by_user_id
+            && $groupCart->status === GroupCart::STATUS_ACTIVE
+            && !$groupCart->hasReachedThreshold()
+            && !$groupCart->order;
+
+        $canRefundOrder = $user->id === $groupCart->created_by_user_id
+            && $groupCart->order
+            && $groupCart->order->status === \App\Models\Order::STATUS_ESCROW_HELD;
+
         return view('group-carts.show', [
             'groupCart' => $groupCart,
             'pricingService' => $pricingService,
@@ -187,6 +196,8 @@ class GroupCartController extends Controller
             'currentUserContribution' => $currentUserContribution,
             'canContribute' => $canContribute,
             'canAcceptBid' => $canAcceptBid,
+            'canExpireFailedCart' => $canExpireFailedCart,
+            'canRefundOrder' => $canRefundOrder,
             'minimumContributionKg' => $groupCart->groceryItem->minimum_contribution_grams / 1000,
         ]);
     }

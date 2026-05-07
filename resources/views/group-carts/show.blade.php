@@ -32,6 +32,18 @@
                 </div>
             @endif
 
+            @if (session('status') === 'order-refunded')
+                <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-md">
+                    Escrow money has been refunded back to participant wallets.
+                </div>
+            @endif
+
+            @if (session('status') === 'group-cart-expired')
+                <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-md">
+                    This failed group cart has been marked as expired. No escrow money was held for this cart.
+                </div>
+            @endif
+
             @if ($errors->any())
                 <div class="bg-red-100 border border-red-300 text-red-800 px-4 py-3 rounded-md">
                     <ul class="list-disc list-inside">
@@ -65,6 +77,11 @@
                             Created by:
                             <strong>{{ $groupCart->creator?->name ?? 'Unknown' }}</strong>
                         </p>
+
+                        <p class="mt-1 text-gray-600">
+                            Status:
+                            <strong>{{ str_replace('_', ' ', ucfirst($groupCart->status)) }}</strong>
+                        </p>
                     </div>
 
                     <a
@@ -78,38 +95,92 @@
 
             @if($groupCart->order)
                 <div class="bg-indigo-50 border border-indigo-200 p-6 rounded-lg">
-                    <h4 class="text-lg font-semibold text-indigo-900">
-                        Order Created and Escrow Held
-                    </h4>
-
-                    <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                         <div>
-                            <p class="text-sm text-indigo-700">Accepted Vendor</p>
-                            <p class="font-bold text-indigo-900">
-                                {{ $groupCart->order->vendor?->vendorProfile?->business_name ?? $groupCart->order->vendor?->name ?? 'Vendor' }}
+                            <h4 class="text-lg font-semibold text-indigo-900">
+                                Order Created and Escrow Held
+                            </h4>
+
+                            <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div>
+                                    <p class="text-sm text-indigo-700">Accepted Vendor</p>
+                                    <p class="font-bold text-indigo-900">
+                                        {{ $groupCart->order->vendor?->vendorProfile?->business_name ?? $groupCart->order->vendor?->name ?? 'Vendor' }}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm text-indigo-700">Bid Price</p>
+                                    <p class="font-bold text-indigo-900">
+                                        ৳{{ number_format($groupCart->order->bid->price_per_kg_paisa / 100, 2) }}/kg
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm text-indigo-700">Total Order Amount</p>
+                                    <p class="font-bold text-indigo-900">
+                                        ৳{{ number_format($groupCart->order->total_amount_paisa / 100, 2) }}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm text-indigo-700">Order Status</p>
+                                    <p class="font-bold text-indigo-900">
+                                        {{ str_replace('_', ' ', ucfirst($groupCart->order->status)) }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if($canRefundOrder)
+                            <form
+                                method="POST"
+                                action="{{ route('orders.refund', $groupCart->order) }}"
+                                onsubmit="return confirm('Refund all escrow money back to participant wallets?');"
+                            >
+                                @csrf
+                                @method('PATCH')
+
+                                <button
+                                    type="submit"
+                                    class="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700"
+                                >
+                                    Refund Escrow
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                </div>
+            @endif
+
+            @if($canExpireFailedCart)
+                <div class="bg-yellow-50 border border-yellow-200 p-6 rounded-lg">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <h4 class="text-lg font-semibold text-yellow-900">
+                                Failed Cart Refund Trigger
+                            </h4>
+
+                            <p class="mt-2 text-sm text-yellow-800">
+                                This cart has not reached the wholesale threshold. For demo, the creator can trigger the failed-cart refund flow and mark it as expired.
                             </p>
                         </div>
 
-                        <div>
-                            <p class="text-sm text-indigo-700">Bid Price</p>
-                            <p class="font-bold text-indigo-900">
-                                ৳{{ number_format($groupCart->order->bid->price_per_kg_paisa / 100, 2) }}/kg
-                            </p>
-                        </div>
+                        <form
+                            method="POST"
+                            action="{{ route('group-carts.expire-refund', $groupCart) }}"
+                            onsubmit="return confirm('Mark this failed cart as expired?');"
+                        >
+                            @csrf
+                            @method('PATCH')
 
-                        <div>
-                            <p class="text-sm text-indigo-700">Total Order Amount</p>
-                            <p class="font-bold text-indigo-900">
-                                ৳{{ number_format($groupCart->order->total_amount_paisa / 100, 2) }}
-                            </p>
-                        </div>
-
-                        <div>
-                            <p class="text-sm text-indigo-700">Order Status</p>
-                            <p class="font-bold text-indigo-900">
-                                {{ str_replace('_', ' ', ucfirst($groupCart->order->status)) }}
-                            </p>
-                        </div>
+                            <button
+                                type="submit"
+                                class="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700"
+                            >
+                                Trigger Failed Cart Refund
+                            </button>
+                        </form>
                     </div>
                 </div>
             @endif
@@ -174,7 +245,11 @@
                     ></div>
                 </div>
 
-                @if($groupCart->status === \App\Models\GroupCart::STATUS_ORDERED)
+                @if($groupCart->status === \App\Models\GroupCart::STATUS_EXPIRED)
+                    <p class="mt-4 text-red-700 font-semibold">
+                        This cart is expired. Contributions, bidding, and checkout are closed.
+                    </p>
+                @elseif($groupCart->status === \App\Models\GroupCart::STATUS_ORDERED)
                     <p class="mt-4 text-indigo-700 font-semibold">
                         This cart has already been ordered. Contributions are locked.
                     </p>
@@ -403,7 +478,7 @@
                 @endif
             </div>
 
-            @if($groupCart->status === \App\Models\GroupCart::STATUS_THRESHOLD_MET || $groupCart->status === \App\Models\GroupCart::STATUS_ORDERED)
+            @if($groupCart->status === \App\Models\GroupCart::STATUS_THRESHOLD_MET || $groupCart->status === \App\Models\GroupCart::STATUS_ORDERED || $groupCart->status === \App\Models\GroupCart::STATUS_EXPIRED)
                 <div class="bg-white p-6 shadow-sm sm:rounded-lg">
                     <h4 class="text-lg font-semibold text-gray-900">
                         Vendor Bids

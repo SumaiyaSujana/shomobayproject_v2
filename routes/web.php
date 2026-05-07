@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GroupCartController;
 use App\Http\Controllers\NeighborProfileController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RefundController;
 use App\Http\Controllers\VendorAnalyticsController;
 use App\Http\Controllers\VendorBidController;
 use App\Http\Controllers\VendorProfileController;
@@ -75,6 +76,12 @@ Route::middleware('auth')->group(function () {
 
     Route::patch('/group-carts/{groupCart}/bids/{bid}/accept', [BidAcceptanceController::class, 'accept'])
         ->name('group-carts.bids.accept');
+
+    Route::patch('/group-carts/{groupCart}/expire-refund', [RefundController::class, 'expireGroupCart'])
+        ->name('group-carts.expire-refund');
+
+    Route::patch('/orders/{order}/refund', [RefundController::class, 'refundOrder'])
+        ->name('orders.refund');
 
     Route::get('/vendor/bulk-requests', [VendorBidController::class, 'index'])
         ->name('vendor.bulk-requests.index');
