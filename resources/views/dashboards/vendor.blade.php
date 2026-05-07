@@ -48,6 +48,20 @@
                         </a>
 
                         <a
+                            href="{{ route('vendor.route-optimization.index') }}"
+                            class="inline-flex items-center justify-center px-4 py-2 bg-orange-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-orange-700"
+                        >
+                            Route Optimization
+                        </a>
+
+                        <a
+                            href="{{ route('seasonality-alerts.index') }}"
+                            class="inline-flex items-center justify-center px-4 py-2 bg-teal-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-teal-800"
+                        >
+                            Seasonality Alerts
+                        </a>
+
+                        <a
                             href="{{ route('vendor.analytics.index') }}"
                             class="inline-flex items-center justify-center px-4 py-2 bg-indigo-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-800"
                         >
@@ -104,7 +118,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
                 <div class="bg-white p-6 shadow-sm sm:rounded-lg">
                     <h4 class="font-semibold text-gray-900">Business Profile</h4>
 
@@ -130,6 +144,36 @@
                         class="inline-block mt-4 text-sm text-purple-600 hover:text-purple-900 underline"
                     >
                         Open my orders
+                    </a>
+                </div>
+
+                <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                    <h4 class="font-semibold text-gray-900">Route Optimization</h4>
+
+                    <p class="mt-3 text-gray-600">
+                        View suggested delivery order for escrow-held neighborhood deliveries.
+                    </p>
+
+                    <a
+                        href="{{ route('vendor.route-optimization.index') }}"
+                        class="inline-block mt-4 text-sm text-orange-600 hover:text-orange-900 underline"
+                    >
+                        Open route planner
+                    </a>
+                </div>
+
+                <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                    <h4 class="font-semibold text-gray-900">Seasonality Alerts</h4>
+
+                    <p class="mt-3 text-gray-600">
+                        Check which items are currently better for supply and bulk buying.
+                    </p>
+
+                    <a
+                        href="{{ route('seasonality-alerts.index') }}"
+                        class="inline-block mt-4 text-sm text-teal-600 hover:text-teal-900 underline"
+                    >
+                        Open alerts
                     </a>
                 </div>
 

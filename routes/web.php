@@ -23,6 +23,10 @@ use App\Http\Controllers\VendorProfileController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminSystemHealthController;
+use App\Http\Controllers\SeasonalityAlertController;
+use App\Http\Controllers\VendorRouteOptimizationController;
+
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -146,6 +150,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/vendor/analytics', [VendorAnalyticsController::class, 'index'])
         ->name('vendor.analytics.index');
+
+    Route::get('/seasonality-alerts', [SeasonalityAlertController::class, 'index'])
+        ->name('seasonality-alerts.index');
+
+    Route::get('/vendor/route-optimization', [VendorRouteOptimizationController::class, 'index'])
+        ->name('vendor.route-optimization.index');    
 });
 
 require __DIR__ . '/auth.php';

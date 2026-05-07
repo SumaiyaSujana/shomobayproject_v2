@@ -55,6 +55,20 @@
                         </a>
 
                         <a
+                            href="{{ route('seasonality-alerts.index') }}"
+                            class="inline-flex items-center justify-center px-4 py-2 bg-teal-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-teal-800"
+                        >
+                            Seasonality Alerts
+                        </a>
+
+                        <a
+                            href="{{ route('disputes.index') }}"
+                            class="inline-flex items-center justify-center px-4 py-2 bg-red-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-800"
+                        >
+                            My Disputes
+                        </a>
+
+                        <a
                             href="{{ route('neighbor.profile.edit') }}"
                             class="inline-flex items-center justify-center px-4 py-2 bg-gray-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700"
                         >
@@ -129,14 +143,57 @@
                 </form>
             </div>
 
-            <div class="bg-white p-6 shadow-sm sm:rounded-lg">
-                <h4 class="text-lg font-semibold text-gray-900">
-                    Sprint 4 Progress
-                </h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                    <h4 class="text-lg font-semibold text-gray-900">
+                        Seasonality Alerts
+                    </h4>
 
-                <p class="mt-2 text-gray-600">
-                    Digital claim tokens are now available after a vendor bid is accepted. Neighbors can use tokens to claim their delivery share.
-                </p>
+                    <p class="mt-2 text-gray-600">
+                        Check which items are currently better for neighborhood bulk buying.
+                    </p>
+
+                    <a
+                        href="{{ route('seasonality-alerts.index') }}"
+                        class="inline-block mt-4 text-sm text-teal-600 hover:text-teal-900 underline"
+                    >
+                        Open seasonality alerts
+                    </a>
+                </div>
+
+                <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                    <h4 class="text-lg font-semibold text-gray-900">
+                        Delivery Claim Tokens
+                    </h4>
+
+                    <p class="mt-2 text-gray-600">
+                        Open your digital claim tokens for ordered group carts.
+                    </p>
+
+                    <a
+                        href="{{ route('claim-tokens.index') }}"
+                        class="inline-block mt-4 text-sm text-purple-600 hover:text-purple-900 underline"
+                    >
+                        Open claim tokens
+                    </a>
+                </div>
+
+                <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                    <h4 class="text-lg font-semibold text-gray-900">
+                        Disputes
+                    </h4>
+
+                    <p class="mt-2 text-gray-600">
+                        Submit and track disputes for delivered orders.
+                    </p>
+
+                    <a
+                        href="{{ route('disputes.index') }}"
+                        class="inline-block mt-4 text-sm text-red-600 hover:text-red-900 underline"
+                    >
+                        Open disputes
+                    </a>
+                </div>
             </div>
 
         </div>
