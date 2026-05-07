@@ -162,6 +162,7 @@ class GroupCartController extends Controller
             'bids.vendor.vendorProfile',
             'order.bid.vendor.vendorProfile',
             'order.deliveryCoordinator',
+            'order.ratings.user',
         ]);
 
         $currentUserContribution = $groupCart->contributions
@@ -197,6 +198,17 @@ class GroupCartController extends Controller
             && $groupCart->order->status === Order::STATUS_ESCROW_HELD
             && !$groupCart->order->delivery_coordinator_user_id;
 
+        $hasUserContributed = $currentUserContribution !== null;
+
+        $currentUserRating = $groupCart->order
+            ? $groupCart->order->ratings->firstWhere('user_id', $user->id)
+            : null;
+
+        $canRateOrder = $groupCart->order
+            && $groupCart->order->status === Order::STATUS_DELIVERED
+            && $hasUserContributed
+            && !$currentUserRating;
+
         return view('group-carts.show', [
             'groupCart' => $groupCart,
             'pricingService' => $pricingService,
@@ -211,6 +223,8 @@ class GroupCartController extends Controller
             'canRefundOrder' => $canRefundOrder,
             'canMarkDelivered' => $canMarkDelivered,
             'canAssignCoordinator' => $canAssignCoordinator,
+            'canRateOrder' => $canRateOrder,
+            'currentUserRating' => $currentUserRating,
             'minimumContributionKg' => $groupCart->groceryItem->minimum_contribution_grams / 1000,
         ]);
     }

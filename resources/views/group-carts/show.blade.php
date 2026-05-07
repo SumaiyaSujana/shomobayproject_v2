@@ -50,6 +50,12 @@
                 </div>
             @endif
 
+            @if (session('status') === 'rating-submitted')
+                <div class="bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-md">
+                    Thank you. Your produce quality rating has been submitted successfully.
+                </div>
+            @endif
+
             @if (session('status') === 'group-cart-expired')
                 <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-md">
                     This failed group cart has been marked as expired. No escrow money was held for this cart.
@@ -678,6 +684,142 @@
                             </p>
                         @endif
                     @endif
+                </div>
+            @endif
+
+            @if($groupCart->order && $groupCart->order->status === \App\Models\Order::STATUS_DELIVERED)
+                <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                    <h4 class="text-lg font-semibold text-gray-900">
+                        Produce Quality Rating
+                    </h4>
+
+                    @if($canRateOrder)
+                        <p class="mt-2 text-gray-600">
+                            Rate the quality of the delivered produce. This helps neighbors choose reliable vendors in future group buys.
+                        </p>
+
+                        <form
+                            method="POST"
+                            action="{{ route('orders.ratings.store', $groupCart->order) }}"
+                            class="mt-6 space-y-6"
+                        >
+                            @csrf
+
+                            <div>
+                                <x-input-label for="score" value="Quality Score" />
+
+                                <select
+                                    id="score"
+                                    name="score"
+                                    class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                    required
+                                >
+                                    <option value="">
+                                        Select score
+                                    </option>
+                                    <option value="5">5 - Excellent</option>
+                                    <option value="4">4 - Good</option>
+                                    <option value="3">3 - Average</option>
+                                    <option value="2">2 - Poor</option>
+                                    <option value="1">1 - Very Poor</option>
+                                </select>
+
+                                <x-input-error class="mt-2" :messages="$errors->get('score')" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="comment" value="Comment" />
+
+                                <textarea
+                                    id="comment"
+                                    name="comment"
+                                    rows="4"
+                                    class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                    placeholder="Example: Product quality was fresh and delivery packaging was clean."
+                                >{{ old('comment') }}</textarea>
+
+                                <x-input-error class="mt-2" :messages="$errors->get('comment')" />
+                            </div>
+
+                            <div>
+                                <x-primary-button>
+                                    Submit Rating
+                                </x-primary-button>
+                            </div>
+                        </form>
+                    @elseif($currentUserRating)
+                        <div class="mt-4 rounded-md bg-indigo-50 p-4">
+                            <p class="text-indigo-900 font-semibold">
+                                You rated this order {{ $currentUserRating->score }}/5.
+                            </p>
+
+                            @if($currentUserRating->comment)
+                                <p class="mt-2 text-indigo-700">
+                                    “{{ $currentUserRating->comment }}”
+                                </p>
+                            @endif
+                        </div>
+                    @else
+                        <p class="mt-2 text-gray-600">
+                            Only neighbors who joined this delivered order can submit a quality rating.
+                        </p>
+                    @endif
+
+                    <div class="mt-8">
+                        <h5 class="font-semibold text-gray-900">
+                            All Ratings
+                        </h5>
+
+                        @if($groupCart->order->ratings->isEmpty())
+                            <p class="mt-3 text-gray-600">
+                                No ratings have been submitted yet.
+                            </p>
+                        @else
+                            <div class="mt-4 space-y-4">
+                                @foreach($groupCart->order->ratings as $rating)
+                                    <div class="rounded-md border border-gray-200 p-4">
+                                        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                                            <div>
+                                                <p class="font-semibold text-gray-900">
+                                                    {{ $rating->user?->name ?? 'Unknown Neighbor' }}
+                                                </p>
+
+                                                @if($rating->comment)
+                                                    <p class="mt-2 text-gray-600">
+                                                        {{ $rating->comment }}
+                                                    </p>
+                                                @else
+                                                    <p class="mt-2 text-gray-500">
+                                                        No comment added.
+                                                    </p>
+                                                @endif
+                                            </div>
+
+                                            <div class="text-right">
+                                                <p class="text-sm text-gray-500">
+                                                    Score
+                                                </p>
+
+                                                <p class="text-2xl font-bold text-green-700">
+                                                    {{ $rating->score }}/5
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <div class="mt-6 rounded-md bg-gray-50 p-4">
+                                <p class="text-sm text-gray-500">
+                                    Average Quality Score
+                                </p>
+
+                                <p class="mt-1 text-2xl font-bold text-green-700">
+                                    {{ number_format($groupCart->order->ratings->avg('score'), 1) }}/5
+                                </p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             @endif
 

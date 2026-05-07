@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
@@ -70,6 +71,14 @@ class Order extends Model
     public function deliveryCoordinator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'delivery_coordinator_user_id');
+    }
+
+    /**
+     * Ratings given for this delivered order.
+     */
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(Rating::class);
     }
 
     /**

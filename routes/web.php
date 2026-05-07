@@ -16,6 +16,7 @@ use App\Http\Controllers\VendorProfileController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DeliveryCoordinatorController;
+use App\Http\Controllers\RatingController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -91,6 +92,9 @@ Route::middleware('auth')->group(function () {
 
     Route::patch('/orders/{order}/assign-coordinator', [DeliveryCoordinatorController::class, 'assign'])
         ->name('orders.assign-coordinator');
+
+    Route::post('/orders/{order}/ratings', [RatingController::class, 'store'])
+        ->name('orders.ratings.store');    
 
     Route::get('/claim-tokens', [ClaimTokenController::class, 'index'])
         ->name('claim-tokens.index');
