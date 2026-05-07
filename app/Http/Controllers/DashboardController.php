@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bid;
+use App\Models\GroupCart;
 use App\Models\User;
 use App\Models\VendorProfile;
 use Illuminate\Http\Request;
@@ -32,6 +34,8 @@ class DashboardController extends Controller
                 'user' => $user,
                 'vendorProfile' => $user->vendorProfile,
                 'wallet' => $user->wallet,
+                'availableBulkRequests' => GroupCart::where('status', GroupCart::STATUS_THRESHOLD_MET)->count(),
+                'activeVendorBids' => Bid::where('vendor_user_id', $user->id)->count(),
             ]);
         }
 

@@ -57,6 +57,14 @@ class GroupCart extends Model
     }
 
     /**
+     * Vendor bids for this cart.
+     */
+    public function bids(): HasMany
+    {
+        return $this->hasMany(Bid::class);
+    }
+
+    /**
      * Check whether the cart reached wholesale threshold.
      */
     public function hasReachedThreshold(): bool

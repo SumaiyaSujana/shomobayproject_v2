@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GroupCartController;
 use App\Http\Controllers\NeighborProfileController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VendorBidController;
 use App\Http\Controllers\VendorProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -65,6 +66,15 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/group-carts/{groupCart}/contributions', [CartContributionController::class, 'destroy'])
         ->name('group-carts.contributions.destroy');
+
+    Route::get('/vendor/bulk-requests', [VendorBidController::class, 'index'])
+        ->name('vendor.bulk-requests.index');
+
+    Route::get('/vendor/bulk-requests/{groupCart}', [VendorBidController::class, 'show'])
+        ->name('vendor.bulk-requests.show');
+
+    Route::post('/vendor/bulk-requests/{groupCart}/bids', [VendorBidController::class, 'store'])
+        ->name('vendor.bulk-requests.bids.store');
 });
 
 require __DIR__ . '/auth.php';
