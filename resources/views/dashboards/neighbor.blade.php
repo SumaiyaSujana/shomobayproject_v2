@@ -8,15 +8,30 @@
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h3 class="text-2xl font-bold text-gray-900">
-                        Welcome, {{ $user->name }}
-                    </h3>
+            @if (session('status') === 'neighbor-profile-updated')
+                <div class="bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-md">
+                    Neighbor profile updated successfully.
+                </div>
+            @endif
 
-                    <p class="mt-2 text-gray-600">
-                        You are logged in as a neighbor. From here, you will join group carts, add grocery contributions, track escrow payments, and claim delivered items.
-                    </p>
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900">
+                            Welcome, {{ $user->name }}
+                        </h3>
+
+                        <p class="mt-2 text-gray-600">
+                            You are logged in as a neighbor. From here, you will join group carts, add grocery contributions, track escrow payments, and claim delivered items.
+                        </p>
+                    </div>
+
+                    <a
+                        href="{{ route('neighbor.profile.edit') }}"
+                        class="inline-flex items-center px-4 py-2 bg-gray-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700"
+                    >
+                        Edit Neighbor Profile
+                    </a>
                 </div>
             </div>
 
@@ -39,6 +54,11 @@
                     <h4 class="font-semibold text-gray-900">Apartment Building</h4>
                     <p class="mt-3 text-lg text-gray-700">
                         {{ $neighborProfile?->apartment_building ?? 'Not added yet' }}
+                    </p>
+
+                    <p class="mt-2 text-sm text-gray-500">
+                        Coordinates:
+                        {{ $neighborProfile?->location_coordinates ?? 'Not added yet' }}
                     </p>
                 </div>
             </div>

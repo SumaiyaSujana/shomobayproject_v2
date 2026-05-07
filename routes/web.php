@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NeighborProfileController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VendorProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,6 +23,18 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
+
+    Route::get('/neighbor/profile', [NeighborProfileController::class, 'edit'])
+        ->name('neighbor.profile.edit');
+
+    Route::patch('/neighbor/profile', [NeighborProfileController::class, 'update'])
+        ->name('neighbor.profile.update');
+
+    Route::get('/vendor/profile', [VendorProfileController::class, 'edit'])
+        ->name('vendor.profile.edit');
+
+    Route::patch('/vendor/profile', [VendorProfileController::class, 'update'])
+        ->name('vendor.profile.update');
 });
 
 require __DIR__ . '/auth.php';

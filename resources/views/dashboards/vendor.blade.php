@@ -8,15 +8,30 @@
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h3 class="text-2xl font-bold text-gray-900">
-                        Welcome, {{ $user->name }}
-                    </h3>
+            @if (session('status') === 'vendor-profile-updated')
+                <div class="bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-md">
+                    Vendor profile updated successfully.
+                </div>
+            @endif
 
-                    <p class="mt-2 text-gray-600">
-                        You are logged in as a vendor, farmer, or wholesaler. After admin verification, you will be able to bid on neighborhood bulk orders.
-                    </p>
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900">
+                            Welcome, {{ $user->name }}
+                        </h3>
+
+                        <p class="mt-2 text-gray-600">
+                            You are logged in as a vendor, farmer, or wholesaler. After admin verification, you will be able to bid on neighborhood bulk orders.
+                        </p>
+                    </div>
+
+                    <a
+                        href="{{ route('vendor.profile.edit') }}"
+                        class="inline-flex items-center px-4 py-2 bg-gray-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700"
+                    >
+                        Edit Vendor Profile
+                    </a>
                 </div>
             </div>
 
@@ -46,6 +61,11 @@
                     <h4 class="font-semibold text-gray-900">Business Name</h4>
                     <p class="mt-3 text-lg text-gray-700">
                         {{ $vendorProfile?->business_name ?? 'Not added yet' }}
+                    </p>
+
+                    <p class="mt-2 text-sm text-gray-500">
+                        License File:
+                        {{ $vendorProfile?->trade_license_file ? 'Uploaded' : 'Not uploaded yet' }}
                     </p>
                 </div>
             </div>
