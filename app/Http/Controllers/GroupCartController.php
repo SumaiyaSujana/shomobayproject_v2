@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\GroceryItem;
 use App\Models\GroupCart;
+use App\Models\Order;
 use App\Services\GeoDistanceService;
 use App\Services\GroupCartPricingService;
 use Carbon\Carbon;
@@ -184,7 +185,11 @@ class GroupCartController extends Controller
 
         $canRefundOrder = $user->id === $groupCart->created_by_user_id
             && $groupCart->order
-            && $groupCart->order->status === \App\Models\Order::STATUS_ESCROW_HELD;
+            && $groupCart->order->status === Order::STATUS_ESCROW_HELD;
+
+        $canMarkDelivered = $user->id === $groupCart->created_by_user_id
+            && $groupCart->order
+            && $groupCart->order->status === Order::STATUS_ESCROW_HELD;
 
         return view('group-carts.show', [
             'groupCart' => $groupCart,
@@ -198,6 +203,7 @@ class GroupCartController extends Controller
             'canAcceptBid' => $canAcceptBid,
             'canExpireFailedCart' => $canExpireFailedCart,
             'canRefundOrder' => $canRefundOrder,
+            'canMarkDelivered' => $canMarkDelivered,
             'minimumContributionKg' => $groupCart->groceryItem->minimum_contribution_grams / 1000,
         ]);
     }

@@ -6,6 +6,7 @@ use App\Http\Controllers\CartContributionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GroupCartController;
 use App\Http\Controllers\NeighborProfileController;
+use App\Http\Controllers\OrderDeliveryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\VendorAnalyticsController;
@@ -82,6 +83,9 @@ Route::middleware('auth')->group(function () {
 
     Route::patch('/orders/{order}/refund', [RefundController::class, 'refundOrder'])
         ->name('orders.refund');
+
+    Route::patch('/orders/{order}/mark-delivered', [OrderDeliveryController::class, 'markDelivered'])
+        ->name('orders.mark-delivered');
 
     Route::get('/vendor/bulk-requests', [VendorBidController::class, 'index'])
         ->name('vendor.bulk-requests.index');

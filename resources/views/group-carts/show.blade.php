@@ -38,6 +38,12 @@
                 </div>
             @endif
 
+            @if (session('status') === 'order-delivered')
+                <div class="bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-md">
+                    Order marked as delivered successfully. Escrow money has been released to the vendor.
+                </div>
+            @endif
+
             @if (session('status') === 'group-cart-expired')
                 <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-md">
                     This failed group cart has been marked as expired. No escrow money was held for this cart.
@@ -95,8 +101,8 @@
 
             @if($groupCart->order)
                 <div class="bg-indigo-50 border border-indigo-200 p-6 rounded-lg">
-                    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                        <div>
+                    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+                        <div class="flex-1">
                             <h4 class="text-lg font-semibold text-indigo-900">
                                 Order Created and Escrow Held
                             </h4>
@@ -132,23 +138,43 @@
                             </div>
                         </div>
 
-                        @if($canRefundOrder)
-                            <form
-                                method="POST"
-                                action="{{ route('orders.refund', $groupCart->order) }}"
-                                onsubmit="return confirm('Refund all escrow money back to participant wallets?');"
-                            >
-                                @csrf
-                                @method('PATCH')
-
-                                <button
-                                    type="submit"
-                                    class="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700"
+                        <div class="flex flex-col gap-3 min-w-[180px]">
+                            @if($canRefundOrder)
+                                <form
+                                    method="POST"
+                                    action="{{ route('orders.refund', $groupCart->order) }}"
+                                    onsubmit="return confirm('Refund all escrow money back to participant wallets?');"
                                 >
-                                    Refund Escrow
-                                </button>
-                            </form>
-                        @endif
+                                    @csrf
+                                    @method('PATCH')
+
+                                    <button
+                                        type="submit"
+                                        class="w-full inline-flex items-center justify-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700"
+                                    >
+                                        Refund Escrow
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($canMarkDelivered)
+                                <form
+                                    method="POST"
+                                    action="{{ route('orders.mark-delivered', $groupCart->order) }}"
+                                    onsubmit="return confirm('Mark this order as delivered and release escrow money to the vendor?');"
+                                >
+                                    @csrf
+                                    @method('PATCH')
+
+                                    <button
+                                        type="submit"
+                                        class="w-full inline-flex items-center justify-center px-4 py-2 bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-800"
+                                    >
+                                        Mark Delivered
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
                     </div>
                 </div>
             @endif
