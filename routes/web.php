@@ -5,18 +5,21 @@ use App\Http\Controllers\BidAcceptanceController;
 use App\Http\Controllers\CartContributionController;
 use App\Http\Controllers\ClaimTokenController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DeliveryCoordinatorController;
 use App\Http\Controllers\GroupCartController;
 use App\Http\Controllers\NeighborProfileController;
 use App\Http\Controllers\OrderDeliveryController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RatingController;
 use App\Http\Controllers\RefundController;
+use App\Http\Controllers\SubstitutionRequestController;
+use App\Http\Controllers\SubstitutionVoteController;
 use App\Http\Controllers\VendorAnalyticsController;
 use App\Http\Controllers\VendorBidController;
+use App\Http\Controllers\VendorOrderController;
 use App\Http\Controllers\VendorProfileController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DeliveryCoordinatorController;
-use App\Http\Controllers\RatingController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -94,7 +97,7 @@ Route::middleware('auth')->group(function () {
         ->name('orders.assign-coordinator');
 
     Route::post('/orders/{order}/ratings', [RatingController::class, 'store'])
-        ->name('orders.ratings.store');    
+        ->name('orders.ratings.store');
 
     Route::get('/claim-tokens', [ClaimTokenController::class, 'index'])
         ->name('claim-tokens.index');
@@ -113,6 +116,15 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/vendor/bulk-requests/{groupCart}/bids', [VendorBidController::class, 'store'])
         ->name('vendor.bulk-requests.bids.store');
+
+    Route::get('/vendor/orders', [VendorOrderController::class, 'index'])
+        ->name('vendor.orders.index');
+
+    Route::post('/vendor/orders/{order}/substitution', [SubstitutionRequestController::class, 'store'])
+        ->name('vendor.orders.substitution.store');
+
+    Route::post('/substitution-requests/{substitutionRequest}/vote', [SubstitutionVoteController::class, 'vote'])
+        ->name('substitution-requests.vote');
 
     Route::get('/vendor/analytics', [VendorAnalyticsController::class, 'index'])
         ->name('vendor.analytics.index');

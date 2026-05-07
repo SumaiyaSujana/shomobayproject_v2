@@ -56,6 +56,12 @@
                 </div>
             @endif
 
+            @if (session('status') === 'substitution-vote-saved')
+                <div class="bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-md">
+                    Your substitution vote has been saved successfully.
+                </div>
+            @endif
+
             @if (session('status') === 'group-cart-expired')
                 <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-md">
                     This failed group cart has been marked as expired. No escrow money was held for this cart.
@@ -264,6 +270,125 @@
                         <p class="mt-2 text-gray-600">
                             Coordinator discount is only available while the order is in escrow and before delivery/refund.
                         </p>
+                    @endif
+                </div>
+            @endif
+
+            @if($substitutionRequest)
+                <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                    <h4 class="text-lg font-semibold text-gray-900">
+                        Substitution Voting
+                    </h4>
+
+                    <div class="mt-4 rounded-md bg-purple-50 p-4">
+                        <p class="text-purple-900">
+                            Vendor proposed replacing
+                            <strong>{{ $substitutionRequest->original_item_name }}</strong>
+                            with
+                            <strong>{{ $substitutionRequest->substitute_item_name }}</strong>.
+                        </p>
+
+                        @if($substitutionRequest->reason)
+                            <p class="mt-2 text-sm text-purple-700">
+                                Reason: {{ $substitutionRequest->reason }}
+                            </p>
+                        @endif
+
+                        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <p class="text-sm text-purple-700">Status</p>
+                                <p class="font-bold text-purple-900">
+                                    {{ ucfirst($substitutionRequest->status) }}
+                                </p>
+                            </div>
+
+                            <div>
+                                <p class="text-sm text-purple-700">Approve Votes</p>
+                                <p class="font-bold text-green-700">
+                                    {{ $substitutionRequest->approveVotesCount() }}
+                                </p>
+                            </div>
+
+                            <div>
+                                <p class="text-sm text-purple-700">Reject Votes</p>
+                                <p class="font-bold text-red-600">
+                                    {{ $substitutionRequest->rejectVotesCount() }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if($canVoteOnSubstitution)
+                        <form
+                            method="POST"
+                            action="{{ route('substitution-requests.vote', $substitutionRequest) }}"
+                            class="mt-6 flex flex-col sm:flex-row gap-3"
+                        >
+                            @csrf
+
+                            <button
+                                type="submit"
+                                name="vote"
+                                value="approve"
+                                class="inline-flex items-center justify-center px-4 py-2 bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-800"
+                            >
+                                Approve Substitute
+                            </button>
+
+                            <button
+                                type="submit"
+                                name="vote"
+                                value="reject"
+                                class="inline-flex items-center justify-center px-4 py-2 bg-red-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-800"
+                            >
+                                Reject Substitute
+                            </button>
+                        </form>
+
+                        @if($currentSubstitutionVote)
+                            <p class="mt-3 text-sm text-gray-600">
+                                Your current vote:
+                                <strong>{{ ucfirst($currentSubstitutionVote->vote) }}</strong>.
+                                You can change it while voting is still pending.
+                            </p>
+                        @endif
+                    @elseif($currentSubstitutionVote)
+                        <p class="mt-4 text-gray-600">
+                            Your vote:
+                            <strong>{{ ucfirst($currentSubstitutionVote->vote) }}</strong>
+                        </p>
+                    @else
+                        <p class="mt-4 text-gray-600">
+                            Voting is only available to contributors while the order is still in escrow and the request is pending.
+                        </p>
+                    @endif
+
+                    @if($substitutionRequest->votes->isNotEmpty())
+                        <div class="mt-6">
+                            <h5 class="font-semibold text-gray-900">
+                                Vote Details
+                            </h5>
+
+                            <div class="mt-4 space-y-3">
+                                @foreach($substitutionRequest->votes as $vote)
+                                    <div class="rounded-md border border-gray-200 p-3 flex items-center justify-between">
+                                        <span class="text-gray-900">
+                                            {{ $vote->user?->name ?? 'Unknown Neighbor' }}
+                                        </span>
+
+                                        @if($vote->vote === \App\Models\SubstitutionVote::VOTE_APPROVE)
+                                            <span class="text-green-700 font-semibold">
+                                                Approved
+                                            </span>
+                                        @else
+                                            <span class="text-red-600 font-semibold">
+                                                Rejected
+                                            </span>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     @endif
                 </div>
             @endif

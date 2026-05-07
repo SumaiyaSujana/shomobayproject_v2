@@ -12,11 +12,11 @@
                 <div class="p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                         <h3 class="text-2xl font-bold text-gray-900">
-                            Nearby Active Group Carts
+                            Nearby Group Carts and Orders
                         </h3>
 
                         <p class="mt-2 text-gray-600">
-                            You can see carts from your own building or carts within a 1 km neighborhood radius.
+                            You can see active carts, threshold-met carts, and ordered carts from your own building or within a 1 km neighborhood radius.
                         </p>
 
                         @if($neighborProfile?->apartment_building)
@@ -50,7 +50,7 @@
             @if($groupCarts->isEmpty())
                 <div class="bg-white p-6 shadow-sm sm:rounded-lg">
                     <p class="text-gray-600">
-                        No nearby active group carts found. You can start one for your building.
+                        No nearby group carts or ordered carts found. You can start one for your building.
                     </p>
                 </div>
             @else
@@ -59,7 +59,6 @@
                         @php
                             $currentPrice = $pricingService->currentPricePerKgPaisa($cart);
                             $progress = $pricingService->progressPercentage($cart);
-                            $thresholdMet = $pricingService->canCheckout($cart);
                             $sameBuilding = $neighborProfile?->apartment_building === $cart->apartment_building;
                             $distanceText = $geoDistanceService->formattedDistance(
                                 $neighborProfile?->location_coordinates,
@@ -85,10 +84,20 @@
                                     <p class="mt-1 text-sm text-gray-500">
                                         {{ $distanceText }}
                                     </p>
+
+                                    @if($cart->order?->substitutionRequest)
+                                        <p class="mt-2 text-sm font-semibold text-purple-700">
+                                            Substitution voting available
+                                        </p>
+                                    @endif
                                 </div>
 
                                 <div class="flex flex-col gap-2 items-end">
-                                    @if($thresholdMet)
+                                    @if($cart->status === \App\Models\GroupCart::STATUS_ORDERED)
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
+                                            Ordered
+                                        </span>
+                                    @elseif($cart->status === \App\Models\GroupCart::STATUS_THRESHOLD_MET)
                                         <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800">
                                             Threshold Met
                                         </span>
@@ -160,7 +169,11 @@
                                     href="{{ route('group-carts.show', $cart) }}"
                                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700"
                                 >
-                                    View and Join
+                                    @if($cart->status === \App\Models\GroupCart::STATUS_ORDERED)
+                                        View Order
+                                    @else
+                                        View and Join
+                                    @endif
                                 </a>
                             </div>
                         </div>

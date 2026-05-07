@@ -77,6 +77,16 @@ class User extends Authenticatable
         return $this->hasMany(Rating::class, 'vendor_user_id');
     }
 
+    public function substitutionRequestsAsVendor(): HasMany
+    {
+        return $this->hasMany(SubstitutionRequest::class, 'vendor_user_id');
+    }
+
+    public function substitutionVotes(): HasMany
+    {
+        return $this->hasMany(SubstitutionVote::class);
+    }
+
     public function isNeighbor(): bool
     {
         return $this->role === self::ROLE_NEIGHBOR;

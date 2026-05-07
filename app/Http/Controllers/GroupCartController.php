@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\GroceryItem;
 use App\Models\GroupCart;
 use App\Models\Order;
+use App\Models\SubstitutionRequest;
 use App\Services\GeoDistanceService;
 use App\Services\GroupCartPricingService;
 use Carbon\Carbon;
@@ -16,7 +17,7 @@ use Illuminate\View\View;
 class GroupCartController extends Controller
 {
     /**
-     * Show active and threshold-met group carts for nearby neighbors.
+     * Show active, threshold-met, and ordered group carts for nearby neighbors.
      */
     public function index(
         GroupCartPricingService $pricingService,
@@ -28,10 +29,11 @@ class GroupCartController extends Controller
 
         $neighborProfile = $user->neighborProfile;
 
-        $allGroupCarts = GroupCart::with(['groceryItem', 'creator'])
+        $allGroupCarts = GroupCart::with(['groceryItem', 'creator', 'order.substitutionRequest'])
             ->whereIn('status', [
                 GroupCart::STATUS_ACTIVE,
                 GroupCart::STATUS_THRESHOLD_MET,
+                GroupCart::STATUS_ORDERED,
             ])
             ->latest()
             ->get();
@@ -163,6 +165,8 @@ class GroupCartController extends Controller
             'order.bid.vendor.vendorProfile',
             'order.deliveryCoordinator',
             'order.ratings.user',
+            'order.substitutionRequest.votes.user',
+            'order.substitutionRequest.vendor.vendorProfile',
         ]);
 
         $currentUserContribution = $groupCart->contributions
@@ -209,6 +213,18 @@ class GroupCartController extends Controller
             && $hasUserContributed
             && !$currentUserRating;
 
+        $substitutionRequest = $groupCart->order?->substitutionRequest;
+
+        $currentSubstitutionVote = $substitutionRequest
+            ? $substitutionRequest->votes->firstWhere('user_id', $user->id)
+            : null;
+
+        $canVoteOnSubstitution = $substitutionRequest
+            && $substitutionRequest->status === SubstitutionRequest::STATUS_PENDING
+            && $groupCart->order
+            && $groupCart->order->status === Order::STATUS_ESCROW_HELD
+            && $hasUserContributed;
+
         return view('group-carts.show', [
             'groupCart' => $groupCart,
             'pricingService' => $pricingService,
@@ -225,6 +241,9 @@ class GroupCartController extends Controller
             'canAssignCoordinator' => $canAssignCoordinator,
             'canRateOrder' => $canRateOrder,
             'currentUserRating' => $currentUserRating,
+            'substitutionRequest' => $substitutionRequest,
+            'currentSubstitutionVote' => $currentSubstitutionVote,
+            'canVoteOnSubstitution' => $canVoteOnSubstitution,
             'minimumContributionKg' => $groupCart->groceryItem->minimum_contribution_grams / 1000,
         ]);
     }
