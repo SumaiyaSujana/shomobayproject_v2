@@ -154,7 +154,13 @@ class GroupCartController extends Controller
 
         abort_unless($user->isNeighbor(), 403);
 
-        $groupCart->load(['groceryItem', 'creator', 'contributions.user']);
+        $groupCart->load([
+            'groceryItem',
+            'creator',
+            'contributions.user.wallet',
+            'bids.vendor.vendorProfile',
+            'order.bid.vendor.vendorProfile',
+        ]);
 
         $currentUserContribution = $groupCart->contributions
             ->firstWhere('user_id', $user->id);
@@ -167,6 +173,10 @@ class GroupCartController extends Controller
             && $groupCart->status !== GroupCart::STATUS_ORDERED
             && $groupCart->status !== GroupCart::STATUS_EXPIRED;
 
+        $canAcceptBid = $user->id === $groupCart->created_by_user_id
+            && $groupCart->status === GroupCart::STATUS_THRESHOLD_MET
+            && !$groupCart->order;
+
         return view('group-carts.show', [
             'groupCart' => $groupCart,
             'pricingService' => $pricingService,
@@ -176,6 +186,7 @@ class GroupCartController extends Controller
             'remainingWeightGrams' => $pricingService->remainingWeightGrams($groupCart),
             'currentUserContribution' => $currentUserContribution,
             'canContribute' => $canContribute,
+            'canAcceptBid' => $canAcceptBid,
             'minimumContributionKg' => $groupCart->groceryItem->minimum_contribution_grams / 1000,
         ]);
     }

@@ -14,6 +14,12 @@
                 </div>
             @endif
 
+            @if (session('status') === 'wallet-topped-up')
+                <div class="bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-md">
+                    Demo wallet balance added successfully.
+                </div>
+            @endif
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
@@ -22,7 +28,7 @@
                         </h3>
 
                         <p class="mt-2 text-gray-600">
-                            You are logged in as a neighbor. From here, you will join group carts, add grocery contributions, track escrow payments, and claim delivered items.
+                            You are logged in as a neighbor. From here, you can join group carts, add grocery contributions, track escrow payments, and claim delivered items.
                         </p>
                     </div>
 
@@ -81,11 +87,48 @@
 
             <div class="bg-white p-6 shadow-sm sm:rounded-lg">
                 <h4 class="text-lg font-semibold text-gray-900">
-                    Sprint 2 Progress
+                    Add Demo Wallet Balance
                 </h4>
 
                 <p class="mt-2 text-gray-600">
-                    The group cart engine has started. You can now create shared grocery carts for your building and view active neighborhood carts.
+                    This is a local testing wallet top-up. In a real system, this would be replaced by a payment gateway.
+                </p>
+
+                <form method="POST" action="{{ route('wallet.top-up') }}" class="mt-6 flex flex-col sm:flex-row gap-4">
+                    @csrf
+
+                    <div class="flex-1">
+                        <x-input-label for="amount_taka" value="Amount in Taka" />
+
+                        <x-text-input
+                            id="amount_taka"
+                            name="amount_taka"
+                            type="number"
+                            step="0.01"
+                            min="10"
+                            class="mt-1 block w-full"
+                            placeholder="Example: 5000"
+                            required
+                        />
+
+                        <x-input-error class="mt-2" :messages="$errors->get('amount_taka')" />
+                    </div>
+
+                    <div class="flex items-end">
+                        <x-primary-button>
+                            Add Balance
+                        </x-primary-button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                <h4 class="text-lg font-semibold text-gray-900">
+                    Sprint 3 Progress
+                </h4>
+
+                <p class="mt-2 text-gray-600">
+                    Vendor bids can now be accepted by the group cart creator. When a bid is accepted, participant payments are moved into escrow.
                 </p>
             </div>
 

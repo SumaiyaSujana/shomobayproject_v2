@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Bid extends Model
 {
@@ -42,6 +43,14 @@ class Bid extends Model
     public function vendor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'vendor_user_id');
+    }
+
+    /**
+     * A bid may become one accepted order.
+     */
+    public function order(): HasOne
+    {
+        return $this->hasOne(Order::class);
     }
 
     /**

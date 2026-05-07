@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminVendorController;
+use App\Http\Controllers\BidAcceptanceController;
 use App\Http\Controllers\CartContributionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GroupCartController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\NeighborProfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VendorBidController;
 use App\Http\Controllers\VendorProfileController;
+use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,6 +21,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::post('/wallet/top-up', [WalletController::class, 'topUp'])
+        ->name('wallet.top-up');
+
     Route::get('/profile', [ProfileController::class, 'edit'])
         ->name('profile.edit');
 
@@ -66,6 +71,9 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/group-carts/{groupCart}/contributions', [CartContributionController::class, 'destroy'])
         ->name('group-carts.contributions.destroy');
+
+    Route::patch('/group-carts/{groupCart}/bids/{bid}/accept', [BidAcceptanceController::class, 'accept'])
+        ->name('group-carts.bids.accept');
 
     Route::get('/vendor/bulk-requests', [VendorBidController::class, 'index'])
         ->name('vendor.bulk-requests.index');

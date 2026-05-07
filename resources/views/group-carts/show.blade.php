@@ -26,6 +26,12 @@
                 </div>
             @endif
 
+            @if (session('status') === 'bid-accepted')
+                <div class="bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-md">
+                    Vendor bid accepted successfully. Neighbor payments have been moved into escrow.
+                </div>
+            @endif
+
             @if ($errors->any())
                 <div class="bg-red-100 border border-red-300 text-red-800 px-4 py-3 rounded-md">
                     <ul class="list-disc list-inside">
@@ -69,6 +75,44 @@
                     </a>
                 </div>
             </div>
+
+            @if($groupCart->order)
+                <div class="bg-indigo-50 border border-indigo-200 p-6 rounded-lg">
+                    <h4 class="text-lg font-semibold text-indigo-900">
+                        Order Created and Escrow Held
+                    </h4>
+
+                    <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <p class="text-sm text-indigo-700">Accepted Vendor</p>
+                            <p class="font-bold text-indigo-900">
+                                {{ $groupCart->order->vendor?->vendorProfile?->business_name ?? $groupCart->order->vendor?->name ?? 'Vendor' }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-sm text-indigo-700">Bid Price</p>
+                            <p class="font-bold text-indigo-900">
+                                ৳{{ number_format($groupCart->order->bid->price_per_kg_paisa / 100, 2) }}/kg
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-sm text-indigo-700">Total Order Amount</p>
+                            <p class="font-bold text-indigo-900">
+                                ৳{{ number_format($groupCart->order->total_amount_paisa / 100, 2) }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-sm text-indigo-700">Order Status</p>
+                            <p class="font-bold text-indigo-900">
+                                {{ str_replace('_', ' ', ucfirst($groupCart->order->status)) }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div class="bg-white p-6 shadow-sm sm:rounded-lg">
@@ -130,9 +174,13 @@
                     ></div>
                 </div>
 
-                @if($canCheckout)
+                @if($groupCart->status === \App\Models\GroupCart::STATUS_ORDERED)
+                    <p class="mt-4 text-indigo-700 font-semibold">
+                        This cart has already been ordered. Contributions are locked.
+                    </p>
+                @elseif($canCheckout)
                     <p class="mt-4 text-green-700 font-semibold">
-                        Wholesale threshold reached. Checkout is now unlocked for the future vendor bidding and escrow step.
+                        Wholesale threshold reached. Vendors can bid, and the cart creator can accept a bid.
                     </p>
                 @else
                     <p class="mt-4 text-orange-600 font-semibold">
@@ -289,6 +337,14 @@
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                         Estimated Bill
                                     </th>
+
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Wallet
+                                    </th>
+
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Escrow
+                                    </th>
                                 </tr>
                             </thead>
 
@@ -312,6 +368,14 @@
                                         <td class="px-4 py-4 text-sm font-semibold text-gray-900">
                                             ৳{{ number_format($contribution->estimated_amount_paisa / 100, 2) }}
                                         </td>
+
+                                        <td class="px-4 py-4 text-sm text-green-700 font-semibold">
+                                            ৳{{ number_format(($contribution->user?->wallet?->balance_paisa ?? 0) / 100, 2) }}
+                                        </td>
+
+                                        <td class="px-4 py-4 text-sm text-orange-600 font-semibold">
+                                            ৳{{ number_format(($contribution->user?->wallet?->escrow_paisa ?? 0) / 100, 2) }}
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -329,12 +393,109 @@
                                     <td class="px-4 py-4 text-sm font-bold text-gray-900">
                                         ৳{{ number_format($groupCart->contributions->sum('estimated_amount_paisa') / 100, 2) }}
                                     </td>
+
+                                    <td class="px-4 py-4"></td>
+                                    <td class="px-4 py-4"></td>
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
                 @endif
             </div>
+
+            @if($groupCart->status === \App\Models\GroupCart::STATUS_THRESHOLD_MET || $groupCart->status === \App\Models\GroupCart::STATUS_ORDERED)
+                <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+                    <h4 class="text-lg font-semibold text-gray-900">
+                        Vendor Bids
+                    </h4>
+
+                    @if($groupCart->bids->isEmpty())
+                        <p class="mt-3 text-gray-600">
+                            No vendor bids have been submitted yet.
+                        </p>
+                    @else
+                        <div class="mt-4 space-y-4">
+                            @foreach($groupCart->bids as $bid)
+                                <div class="rounded-md border border-gray-200 p-4">
+                                    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                                        <div>
+                                            <p class="font-semibold text-gray-900">
+                                                {{ $bid->vendor?->vendorProfile?->business_name ?? $bid->vendor?->name ?? 'Vendor' }}
+                                            </p>
+
+                                            <p class="mt-1 text-sm text-gray-600">
+                                                Price: ৳{{ number_format($bid->price_per_kg_paisa / 100, 2) }}/kg
+                                            </p>
+
+                                            <p class="mt-1 text-sm text-gray-600">
+                                                Delivery Fee: ৳{{ number_format($bid->delivery_fee_paisa / 100, 2) }}
+                                            </p>
+
+                                            <p class="mt-1 text-sm text-gray-600">
+                                                Estimated Total:
+                                                <strong>৳{{ number_format($bid->estimatedTotalPaisa($groupCart->current_weight_grams) / 100, 2) }}</strong>
+                                            </p>
+
+                                            @if($bid->estimated_delivery_at)
+                                                <p class="mt-1 text-sm text-gray-600">
+                                                    Delivery:
+                                                    {{ $bid->estimated_delivery_at->format('d M Y, h:i A') }}
+                                                </p>
+                                            @endif
+
+                                            @if($bid->note)
+                                                <p class="mt-2 text-sm text-gray-500">
+                                                    {{ $bid->note }}
+                                                </p>
+                                            @endif
+                                        </div>
+
+                                        <div class="flex flex-col items-start md:items-end gap-3">
+                                            @if($bid->status === \App\Models\Bid::STATUS_ACCEPTED)
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                                    Accepted
+                                                </span>
+                                            @elseif($bid->status === \App\Models\Bid::STATUS_REJECTED)
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                                    Rejected
+                                                </span>
+                                            @else
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                    Pending
+                                                </span>
+                                            @endif
+
+                                            @if($canAcceptBid && $bid->status === \App\Models\Bid::STATUS_PENDING)
+                                                <form
+                                                    method="POST"
+                                                    action="{{ route('group-carts.bids.accept', [$groupCart, $bid]) }}"
+                                                    onsubmit="return confirm('Accept this vendor bid and move all neighbor payments into escrow?');"
+                                                >
+                                                    @csrf
+                                                    @method('PATCH')
+
+                                                    <button
+                                                        type="submit"
+                                                        class="inline-flex items-center px-4 py-2 bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-800"
+                                                    >
+                                                        Accept Bid
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        @if(!$canAcceptBid && $groupCart->status === \App\Models\GroupCart::STATUS_THRESHOLD_MET)
+                            <p class="mt-4 text-sm text-gray-500">
+                                Only the group cart creator can accept a vendor bid.
+                            </p>
+                        @endif
+                    @endif
+                </div>
+            @endif
 
         </div>
     </div>
