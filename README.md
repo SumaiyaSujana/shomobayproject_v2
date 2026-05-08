@@ -1,59 +1,86 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+🛒 Shomobay - Anti-Syndicate Neighborhood Bulk Buying
+📌 Project Overview
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Shomobay is a community-driven digital cooperative web application designed to combat grocery inflation and market syndication. It enables neighbors within apartments or local communities to pool their grocery demands into shared bulk orders. Once a collective threshold is met, the system connects users directly with verified farmers and wholesalers through a competitive bidding system.
 
-## About Laravel
+By removing traditional retail middlemen, Shomobay helps consumers access wholesale prices while ensuring fair earnings for producers.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+👥 Team Information
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Section: 08
+Group: 01
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Group Members:
+24341072 - Sumaiya Akter Sujana
+22341050 - Rubaba Khijir Nusheen
+24241227 - Jakia Tasfia
+🎯 Key Objectives
+Enable secure community-based bulk purchasing
+Reduce grocery costs through collective buying power
+Connect consumers directly with farmers/wholesalers
+Implement real-time pricing and threshold-based order validation
+Ensure secure payments using escrow logic
+⚙️ Features
+🧑‍🤝‍🧑 Neighborhood Group System
+Shared grocery carts for apartment/community users
+Real-time group participation tracking
+Dynamic price-drop visualization
+📉 Smart Pricing Engine
+Live price reduction based on group size
+Bulk threshold validation system
+Minimum weight enforcement for checkout
+💰 Split Payment System
+Automated bill splitting based on contribution
+Secure escrow wallet for pooled funds
+Automatic refunds if order fails
+🧑‍🌾 Vendor System
+Vendor verification (NID / Trade License)
+Bulk order bidding system
+Revenue analytics dashboard
+Delivery route optimization
+📦 Delivery & Fulfillment
+QR-based pickup tokens for users
+Quality rating system for vendors
+Substitution voting for unavailable items
+Delivery coordinator incentive system
+🛠️ Admin Panel
+Dispute resolution dashboard
+System health & transaction monitoring
+Geo-fenced group cart visibility
+Seasonal price alerts
+🧰 Tech Stack
+Backend
+Laravel (MVC Framework)
+PHP
+Database
+MySQL
+Frontend
+Blade Templates
+Tailwind CSS
+Alpine.js / Livewire (for real-time interactions)
+🔐 Core Concept
 
-## Learning Laravel
+Shomobay uses a threshold-based cooperative model, where:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Orders are only processed if minimum bulk weight is achieved
+Funds are held in escrow until successful delivery
+Prices dynamically decrease as participation increases
+⚠️ Risks & Challenges
+Real-time price updates and countdown synchronization
+Floating-point precision in split billing
+Secure escrow transaction handling
+Vendor verification security
+Route optimization complexity
+📊 Future Improvements
+Mobile application (Android/iOS)
+AI-based demand prediction
+Automated supplier matching
+Smart logistics integration
+🏁 Conclusion
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Shomobay is a scalable socio-economic solution that combines modern web technologies with cooperative economics. It aims to empower urban communities in Bangladesh by reducing dependency on market syndicates and promoting fair trade between consumers and producers.
 
-## Laravel Sponsors
+## 🧩 System Design
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Class Diagram
+<img width="1342" height="2644" alt="S8_G1" src="https://github.com/user-attachments/assets/f060463a-1bd0-4f36-b8a6-d4827fb203f1" />
