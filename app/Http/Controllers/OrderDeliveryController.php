@@ -31,7 +31,7 @@ class OrderDeliveryController extends Controller
         $escrowReleaseService->releaseEscrowToVendor($order);
 
         return redirect()
-            ->route('group-carts.show', $order->groupCart)
-            ->with('status', 'order-delivered');
+    ->route('claim-tokens.index')
+    ->with('status', 'order-delivered');
     }
 }
